@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server"
 import { getUserFromSession, updateUserSessionExpiration } from "./app/edge-server/session"
 const adminRoutes = ["/dashboard"]
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const response = (await middlewareAuth(request)) ?? NextResponse.next()
 
     await updateUserSessionExpiration({
