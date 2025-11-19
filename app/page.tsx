@@ -1,5 +1,5 @@
 import React from 'react'
-import { LogOutButton } from '@/auth/core/components/LogOutButton'
+import { LogOutButton } from '@/app/auth/core/components/LogOutButton'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import Link from 'next/link'
-import { getCurrentUser } from '@/auth/core/currentUser'
+import { getCurrentUser } from '@/app/auth/core/currentUser'
 
 export default async function Page() {
 

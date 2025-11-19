@@ -18,8 +18,10 @@ export async function signIn(unsafeData: z.infer<typeof loginSchema>) {
     }
     const data = parsed.data
 
+    let existingUser
+
     try {
-        const existingUser = await db.query.usersTable.findFirst({
+        existingUser = await db.query.usersTable.findFirst({
             where: eq(usersTable.email, data.email),
         })
 
@@ -27,7 +29,11 @@ export async function signIn(unsafeData: z.infer<typeof loginSchema>) {
             return { message: "Incorrect email or password" }
         }
 
-        const isCorrectPassword = await comparePassword(data.password, existingUser.password)
+        const isCorrectPassword = await comparePassword(
+            data.password,
+            existingUser.password
+        )
+
         if (!isCorrectPassword) {
             return { message: "Incorrect email or password" }
         }
@@ -37,14 +43,15 @@ export async function signIn(unsafeData: z.infer<typeof loginSchema>) {
             await cookies()
         )
 
-        redirect("/")
-
-    } catch {
+    } catch (err) {
+        console.error("Sign-in error:", err)
         return { message: "Failed to sign in" }
     }
 
-
+    // ⛔ redirect must NOT be inside the try/catch
+    redirect("/")
 }
+
 
 
 export async function signUp(unsafeData: z.infer<typeof registerSchema>) {
@@ -62,33 +69,38 @@ export async function signUp(unsafeData: z.infer<typeof registerSchema>) {
         return { message: "Email already in use" }
     }
 
+    let user;
+
     try {
         const hashedPassword = await hashPassword(data.password)
 
-        const [user] = await db.insert(usersTable)
-            .values({
-                name: data.name,
-                email: data.email,
-                password: hashedPassword,
-            })
-            .returning({
-                id: usersTable.id,
-                email: usersTable.email,
-                role: usersTable.role,
-                name: usersTable.name
-            })
+            ;[user] = await db.insert(usersTable)
+                .values({
+                    name: data.name,
+                    email: data.email,
+                    password: hashedPassword,
+                })
+                .returning({
+                    id: usersTable.id,
+                    email: usersTable.email,
+                    role: usersTable.role,
+                    name: usersTable.name
+                })
 
         await createUserSession(
             { id: user.id.toString(), role: user.role },
             await cookies()
         )
 
-        redirect("/")
-
-    } catch {
+    } catch (err) {
+        console.error("Signup error:", err)
         return { message: "Failed to create account" }
     }
+
+    // ⛔ IMPORTANT: redirect must be OUTSIDE the try/catch
+    redirect("/")
 }
+
 
 export async function logOut() {
     await removeUserFromSession(await cookies())

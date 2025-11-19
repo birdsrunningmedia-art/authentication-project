@@ -1,5 +1,5 @@
 import React from 'react'
-import SignUpForm from '@/auth/core/components/signUpForm'
+import SignUpForm from '@/app/auth/core/components/signUpForm'
 
 export default function page() {
     return (

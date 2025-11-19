@@ -9,6 +9,6 @@ export const userSchema = z.object({
     role: z.enum(ROLE_STATUES).default("user"),
 })
 
-export const loginSchema = userSchema.omit({ role: true })
+export const loginSchema = userSchema.omit({ role: true, name: true })
 export const registerSchema = userSchema.omit({ role: true })
 

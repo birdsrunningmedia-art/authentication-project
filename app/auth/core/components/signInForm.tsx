@@ -4,13 +4,12 @@ import {
     FieldError,
     FieldGroup,
     FieldLabel,
-
 } from "@/components/ui/field"
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { registerSchema } from "@/schema/schema"
+import { loginSchema } from "@/schema/schema"
 import { Input } from "@/components/ui/input"
 import {
     Card,
@@ -19,25 +18,21 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { signUp } from "@/auth/core/actions"
 import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { signIn } from "../actions"
 
-
-export default function SignUpForm() {
+export default function SignInForm() {
     const form = useForm({
         defaultValues: {
-            name: "",
             email: "",
             password: ""
         },
-        resolver: zodResolver(registerSchema)
+        resolver: zodResolver(loginSchema)
     })
 
-
-    async function onSubmit(data: z.infer<typeof registerSchema>) {
-        // To do
-        const res = await signUp(data)
+    async function onSubmit(data: z.infer<typeof loginSchema>) {
+        const res = await signIn(data)
         if (res) {
             form.reset()
             toast.error(res.message)
@@ -59,33 +54,6 @@ export default function SignUpForm() {
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}>
                         <FieldGroup>
-                            <Controller
-                                name="name"
-                                control={form.control}
-                                render={({ field, fieldState }) => (
-                                    <Field
-                                        data-invalid={fieldState.invalid}
-                                    >
-                                        <FieldLabel
-                                            htmlFor={field.name}
-                                        >
-                                            Name
-                                        </FieldLabel>
-                                        <Input
-                                            aria-invalid={fieldState.invalid}
-                                            {...field}
-                                            id={field.name}
-                                            type="text"
-                                            placeholder="Name" />
-                                        {
-                                            fieldState.invalid && (
-                                                <FieldError errors={[fieldState.error]} />
-                                            )
-                                        }
-                                    </Field>
-                                )}
-                            />
-
                             <Controller
                                 name="email"
                                 control={form.control}
@@ -141,8 +109,9 @@ export default function SignUpForm() {
                             />
                             <Button
                                 type="submit"
+                                onClick={() => console.log("clicked")}
                             >
-                                Sign Up
+                                Log in
                             </Button>
 
                         </FieldGroup>
@@ -153,3 +122,4 @@ export default function SignUpForm() {
         </>
     )
 }
+

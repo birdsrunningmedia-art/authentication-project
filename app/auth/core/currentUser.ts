@@ -1,5 +1,5 @@
 import { cookies } from "next/headers"
-import { getUserFromSession } from "../core/session"
+import { getUserFromSession } from "./session"
 import { cache } from "react"
 import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
